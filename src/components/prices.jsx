@@ -74,7 +74,7 @@ function Title() {
   return         (<div className='section-title' style={{paddingTop: 40}}>
   <h2>Kadena Tokens Price Tracker</h2>
   <p>
-    Track how your favourite tokens on the Kadena blockchain are doing
+    Track how your favourite tokens native to the Kadena blockchain are doing
   </p>
   <p> Time graph coming soon</p>
 </div>);

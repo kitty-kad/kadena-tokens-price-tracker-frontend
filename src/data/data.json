@@ -6,7 +6,7 @@
 
     },
     "About": {
-        "paragraph": "This is a tool designed to track prices of tokens listed across Dexes for Kadena. It is a work in progress and is one of the many Kitty Kad community projects to help build the Kadena ecosystem (more projects listed below)."
+        "paragraph": "This is a tool designed to track prices of tokens native to Kadena listed only on Dexes. It is a work in progress and is one of the many Kitty Kad community projects to help build the Kadena ecosystem (more projects listed below)."
     },
     "Tokens": [{
         "name": "Anedak (ADK)",
