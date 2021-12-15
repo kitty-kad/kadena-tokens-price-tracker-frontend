@@ -93,7 +93,7 @@ const GRAPH_OPTIONS = {
     },
     tooltip: {
       x: {
-        format: "dd MMM yyyy"
+        format: "dd MMM yyyy HH:mm"
       },
     },
     legend: {
