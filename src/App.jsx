@@ -22,7 +22,7 @@ const App = () => {
   return (
     <div>
       <Navigation />
-      <Prices data={landingPageData.Tokens} />
+      <Prices/>
       <About data={landingPageData.About} />
       <Projects data={landingPageData.Projects}/>
       <Socials data={landingPageData.Socials} />

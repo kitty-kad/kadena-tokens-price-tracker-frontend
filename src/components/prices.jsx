@@ -8,8 +8,9 @@ import { useEffect } from 'react';
 //2. Initiate the CoinGecko API Client
 const CoinGeckoClient = new CoinGecko();
 
-export const Prices = (props) => {
+export const Prices = (_props) => {
   const [fetchingKdaToUsd, setFetchingKdaToUsd] = useState(false);
+  const [tokensData, setTokensData] = useState(null);
   const [kdaToUsd, setKdaToUsd] = useState(null);
   const [currPrice, setCurrPrice] = useState(null);
   const [currTokenName, setCurrTokenName] = useState(null);
@@ -19,6 +20,13 @@ export const Prices = (props) => {
   // Get the kadena price in USD once when first loading
   useEffect(() => {
     setFetchingKdaToUsd(true);
+    getTokens((data) =>{
+      setTokensData(
+        [...data, {    
+          "name": "Kitty Kad (KittyKad)",
+          "address": "coming-soon"
+      }]);
+    });
     (async () => {
       const result = await CoinGeckoClient.simple.price({ids: "kadena", vs_currencies: "usd"});
       setKdaToUsd(result.data.kadena.usd);
@@ -27,8 +35,8 @@ export const Prices = (props) => {
   }, []);
 
   const options = useMemo(() => {
-    return props.data?.map( data => ({value: data.address, label: data.name}));
-  }, [props.data]);
+    return tokensData?.map( data => ({value: data.address, label: data.name}));
+  }, [tokensData]);
   return (
     <div id='prices' className='text-center' style={{background: KITTY_KAD_BLUE}}>
       <div className='container'>
@@ -54,9 +62,17 @@ export const Prices = (props) => {
   );
 }
 
+function getTokens(callback) {
+  const url = `https://kadena-tokens-price-fetcher.herokuapp.com/getTokenMetadata`;
+  fetchJson(url, callback);
+}
+
 function getHistoricalPrices(tokenAddress, callback) {
   const url = `https://kadena-tokens-price-fetcher.herokuapp.com/getPrices?tokenAddress=${tokenAddress}`;
-  console.log(url);
+  fetchJson(url, callback);
+}
+
+function fetchJson(url, callback) {
   const params = {
     method: 'GET', // *GET, POST, PUT, DELETE, etc.
     headers: {

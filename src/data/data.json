@@ -8,19 +8,6 @@
     "About": {
         "paragraph": "This is a tool designed to track prices of tokens native to Kadena listed only on Dexes. It is a work in progress and is one of the many Kitty Kad community projects to help build the Kadena ecosystem (more projects listed below)."
     },
-    "Tokens": [{
-        "name": "Anedak (ADK)",
-        "address": "free.anedak"
-    },
-    {
-        "name": "Babena (BABE)",
-        "address": "free.babena"
-    },
-    {
-        "name": "Kitty Kad (KittyKad)",
-        "address": "coming-soon"
-    }
-],
     "Socials": [{
         "icon": "fa fa-reddit",
         "link": "Fair launch will happen across DEX's on the Kadena ecosystem"
