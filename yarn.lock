@@ -2452,7 +2452,7 @@
     "normalize-path" "^3.0.0"
     "picomatch" "^2.0.4"
 
-"apexcharts@^3.18.0":
+"apexcharts@^3.18.0", "apexcharts@^3.32.0":
   "integrity" "sha512-9VUyiTR2RgD4NIJOOdKxxi8tjzrKCBMr7HjWxsw+5lDPu/tZJLVudpgFhlNTIy3CbhxQ4edaiTttmbo6eDDgiA=="
   "resolved" "https://registry.npmjs.org/apexcharts/-/apexcharts-3.32.0.tgz"
   "version" "3.32.0"
