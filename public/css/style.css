@@ -611,3 +611,12 @@ label {
 .cursor {
   cursor: pointer;
 }
+
+@import url("https://fonts.googleapis.com/css?family=Poppins");
+
+* {
+  font-family: "Poppins", sans-serif;
+}
+.apexcharts-tooltip {
+  color: black;
+}

@@ -2,6 +2,7 @@ import { getPriceInKadena } from '../pact/PactApi';
 import Select from 'react-select'
 import {useMemo, useState} from 'react';
 import CoinGecko from 'coingecko-api/lib/CoinGecko';
+import { PriceGraph } from './price-graph';
 import { useEffect } from 'react';
 
 //2. Initiate the CoinGecko API Client
@@ -13,6 +14,7 @@ export const Prices = (props) => {
   const [currPrice, setCurrPrice] = useState(null);
   const [currTokenName, setCurrTokenName] = useState(null);
   const [fetchingPrice, setFetchingPrice] = useState(false);
+  const [currTokenHistoricalData, setCurrTokenHistoricalData] = useState([]);
 
   // Get the kadena price in USD once when first loading
   useEffect(() => {
@@ -31,23 +33,42 @@ export const Prices = (props) => {
     <div id='prices' className='text-center' style={{background: KITTY_KAD_BLUE}}>
       <div className='container'>
         <Title/>
-        <div style={selectorAndOutputStyle}>
-          <div style={{width: '200px', paddingTop: TOKEN_DATA_AND_SELECTOR_PADDING}}>
-            <Select options={options} styles={SELECTOR_STYLES}
-                onChange={(newValue) => {
-                  setCurrTokenName(newValue.label);
-                  setFetchingPrice(true);
-                  getPriceInKadena(newValue.value).then(newPrice => {setCurrPrice(newPrice); setFetchingPrice(false)});
-                }}
-            />
-          </div>
-          <div style={tokenDataStyle}>
-            <Price priceInKadena={currPrice} kdaToUsd={kdaToUsd} loading={fetchingPrice || fetchingKdaToUsd} currTokenName={currTokenName}/>
-          </div>
+          <div style={selectorAndGraphStyle}>
+            <div style={{width: '200px', paddingTop: TOKEN_DATA_AND_SELECTOR_PADDING}}>
+              <Select options={options} styles={SELECTOR_STYLES}
+                  onChange={(newValue) => {
+                    setCurrTokenName(newValue.label);
+                    setFetchingPrice(true);
+                    getHistoricalPrices(newValue.value, (data) => setCurrTokenHistoricalData(data))
+                    getPriceInKadena(newValue.value).then(newPrice => {setCurrPrice(newPrice); setFetchingPrice(false)});
+                  }}
+              />
+            </div>
+            <div style={tokenDataStyle}>
+              <Price priceInKadena={currPrice} kdaToUsd={kdaToUsd} loading={fetchingPrice || fetchingKdaToUsd} currTokenName={currTokenName}/>
+            </div>
+            <PriceGraph data={currTokenHistoricalData}/>
         </div>
       </div>
     </div>
   );
+}
+
+function getHistoricalPrices(tokenAddress, callback) {
+  const url = `https://kadena-tokens-price-fetcher.herokuapp.com/getPrices?tokenAddress=${tokenAddress}`;
+  console.log(url);
+  const params = {
+    method: 'GET', // *GET, POST, PUT, DELETE, etc.
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    },
+  };
+  fetch(url, params).then((res) => {
+    return res.json();
+  }).then(json => {
+    callback(json);
+  });
 }
 
 function Price({priceInKadena, kdaToUsd, loading, currTokenName}) {
@@ -76,7 +97,6 @@ function Title() {
   <p>
     Track how your favourite tokens native to the Kadena blockchain are doing
   </p>
-  <p> Time graph coming soon</p>
 </div>);
 }
 
@@ -100,14 +120,13 @@ const tokenDataStyle = {
   alignItems: "center",
 }
 
-const selectorAndOutputStyle = {
-    display: "flex",
-    direction: "row",
-    flexWrap: "wrap",
-    justifyContent: "center",
-    alignItems: "center",
-    maxWidth: '100%',
-    paddingLeft: "20px",
-    paddingRight: "20px",  
-    paddingTop: "20px",
+const selectorAndGraphStyle = {
+  display: "flex",
+  flexDirection: "column",
+  flexWrap: "wrap",
+  justifyContent: "flex-start",
+  alignItems: "center",
+  maxWidth: '100%',
+  paddingLeft: "20px",
+  paddingRight: "20px",  
 }
