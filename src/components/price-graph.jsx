@@ -35,14 +35,6 @@ const GRAPH_OPTIONS = {
       height: 300,
       foreColor: "#FFFFFF",
       stacked: true,
-      dropShadow: {
-        enabled: true,
-        enabledSeries: [0],
-        top: -2,
-        left: 2,
-        blur: 5,
-        opacity: 0.06
-      },
       toolbar: {
         fill : "FFFFFF",
       }
