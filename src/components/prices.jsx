@@ -94,7 +94,7 @@ function Price({priceInKadena, kdaToUsd, loading, currTokenName}) {
     text = "Please select a token";
   } else if (currTokenName === 'Kitty Kad (KittyKad)') {
     text = <>{"Token launching soon, visit "} <a style={{color:'white', textDecoration: "underline"}} 
-      href="https://kittykad.com">kittycad.com</a> {"for more info"} </>
+      href="https://kittykad.com">kittykad.com</a> {"for more info"} </>
   } else if (loading == true) {
     text = 'loading...'
   } else if (kdaToUsd == null || priceInKadena == null) {
