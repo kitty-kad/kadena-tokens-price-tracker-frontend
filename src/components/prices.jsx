@@ -55,7 +55,7 @@ export const Prices = (_props) => {
             <div style={tokenDataStyle}>
               <Price priceInKadena={currPrice} kdaToUsd={kdaToUsd} loading={fetchingPrice || fetchingKdaToUsd} currTokenName={currTokenName}/>
             </div>
-            <PriceGraph data={currTokenHistoricalData}/>
+            <PriceGraph data={currTokenHistoricalData} currPrice={currPrice} kdaToUsd={kdaToUsd}/>
         </div>
       </div>
     </div>

@@ -1,17 +1,21 @@
 import { useMemo } from "react";
 import Chart from "react-apexcharts";
 
-export const PriceGraph = ({data}) => {
+export const PriceGraph = ({data, currPrice, kdaToUsd}) => {
     const series = useMemo( () => {
         const vals = [];
         for(let i = 0; i <data.length; i++){
             vals.push([parseInt(data[i].unix_time) * 1000, data[i].price_in_usd]);
         }
+        // Add latest curr price entry
+        if (currPrice != null ** kdaToUsd != null) {
+          vals.push([Date.now(), currPrice *kdaToUsd]);
+        }
         return [{
             name: 'Price in USD',
             data: vals
         }];
-    }, [data]);
+    }, [data, currPrice]);
 
       return (
         <div>
