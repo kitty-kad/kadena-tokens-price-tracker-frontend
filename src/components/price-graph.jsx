@@ -15,7 +15,7 @@ export const PriceGraph = ({data, currPrice, kdaToUsd}) => {
             name: 'Price in USD',
             data: vals
         }];
-    }, [data, currPrice]);
+    }, [data, currPrice, kdaToUsd]);
 
       return (
         <div>
@@ -33,6 +33,8 @@ export const PriceGraph = ({data, currPrice, kdaToUsd}) => {
       );
 }
 
+const hideIcons = window.screen.width < 500;
+
 const GRAPH_OPTIONS = {
     chart: {
       type: "area",
@@ -40,6 +42,13 @@ const GRAPH_OPTIONS = {
       foreColor: "#FFFFFF",
       stacked: true,
       toolbar: {
+        tools: {
+          pan: hideIcons,
+          zoom: hideIcons,
+          download: hideIcons,
+          reset: false,
+          
+        },
         fill : "FFFFFF",
       }
     },

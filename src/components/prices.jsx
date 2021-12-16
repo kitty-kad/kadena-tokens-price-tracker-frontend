@@ -42,7 +42,7 @@ export const Prices = (_props) => {
       <div className='container'>
         <Title/>
           <div style={selectorAndGraphStyle}>
-            <div style={{width: '200px', paddingTop: TOKEN_DATA_AND_SELECTOR_PADDING}}>
+            <div style={{width: '200px', paddingTop: TOKEN_DATA_AND_SELECTOR_PADDING, zIndex: 15}}>
               <Select options={options} styles={SELECTOR_STYLES}
                   onChange={(newValue) => {
                     setCurrTokenName(newValue.label);
