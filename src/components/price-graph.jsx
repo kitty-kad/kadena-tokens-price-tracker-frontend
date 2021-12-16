@@ -33,8 +33,6 @@ export const PriceGraph = ({data, currPrice, kdaToUsd}) => {
       );
 }
 
-const hideIcons = window.screen.width < 500;
-
 const GRAPH_OPTIONS = {
     chart: {
       type: "area",
@@ -43,9 +41,9 @@ const GRAPH_OPTIONS = {
       stacked: true,
       toolbar: {
         tools: {
-          pan: hideIcons,
-          zoom: hideIcons,
-          download: hideIcons,
+          pan: false,
+          zoom: false,
+          download: false,
           reset: false,
           
         },
