@@ -8,7 +8,7 @@ export const PriceGraph = ({data, currPrice, kdaToUsd}) => {
             vals.push([parseInt(data[i].unix_time) * 1000, data[i].price_in_usd]);
         }
         // Add latest curr price entry
-        if (currPrice != null ** kdaToUsd != null) {
+        if (currPrice != null && kdaToUsd != null) {
           vals.push([Date.now(), currPrice *kdaToUsd]);
         }
         return [{
