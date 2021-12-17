@@ -10,7 +10,7 @@ export const Socials = (props) => {
             className='btn btn-custom btn-lg page-scroll'
           > Reddit</a>
           <a style={socialButtonStyle}
-            href='https://discord.gg/qbbBDRRz'
+            href='https://discord.gg/ac5QDrYmhq'
             className='btn btn-custom btn-lg page-scroll'
           > Discord</a>
                     <a style={socialButtonStyle}
