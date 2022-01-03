@@ -1,31 +1,51 @@
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 import Chart from "react-apexcharts";
 
-export const PriceGraph = ({data, currPrice, kdaToUsd}) => {
+const CHART_WIDTH = Math.min(500, window.screen.width-50);
+const CHART_HEIGHT = CHART_WIDTH / 500 * 300;
+
+export const PriceGraph = ({data, currPrice, kdaToUsd, showInKda}) => {
     const series = useMemo( () => {
         const vals = [];
         for(let i = 0; i <data.length; i++){
-            vals.push([parseInt(data[i].unix_time) * 1000, data[i].price_in_usd]);
+            const price = showInKda ? data[i].price_in_kda:  data[i].price_in_usd ;
+            vals.push([parseInt(data[i].unix_time) * 1000, price]);
         }
         // Add latest curr price entry
         if (currPrice != null && kdaToUsd != null) {
-          vals.push([Date.now(), currPrice *kdaToUsd]);
+          vals.push([Date.now(), currPrice * (showInKda ? 1 : kdaToUsd)]);
         }
         return [{
             name: 'Price in USD',
             data: vals
         }];
-    }, [data, currPrice, kdaToUsd]);
+    }, [data, currPrice, kdaToUsd, showInKda]);
+    const chartRef = useRef(null);
+    console.log(showInKda)
+    let options = getGraphOptions();
+    useMemo( () => {
+      const chart = chartRef?.current?.chart;
+      if(chart == null) {
+        return;
+        // return getGraphOptions(false);
+      }
+
+      chart.updateOptions({yaxis: getYOptions(showInKda)});
+    }, [showInKda]);
+    console.log(chartRef);
+    console.log(CHART_WIDTH);
+    console.log(CHART_HEIGHT);
 
       return (
         <div>
           <div className="row">
             <div className="mixed-chart">
               <Chart
-                options={GRAPH_OPTIONS}
+                ref={chartRef}
+                options={options}
                 series={series}
                 type="area"
-                width={Math.min(500, window.screen.width-50)}
+                width={CHART_WIDTH}
               />
             </div>
           </div>
@@ -35,10 +55,24 @@ export const PriceGraph = ({data, currPrice, kdaToUsd}) => {
 
 const showIcons = window.screen.width > 500;
 
-const GRAPH_OPTIONS = {
+function getYOptions (showInKda) {
+  return {
+    labels: {
+      offsetX: -10,
+      formatter: function (val) {
+          return `${showInKda === true? '': '$'}${val.toFixed(showInKda === true? 3: 2)}`;
+      }
+    },
+    tooltip: {
+      enabled: true,
+    }
+  }
+}
+function getGraphOptions() {
+  return {
     chart: {
       type: "area",
-      height: 300,
+      height: CHART_HEIGHT,
       foreColor: "#FFFFFF",
       stacked: true,
       toolbar: {
@@ -79,17 +113,7 @@ const GRAPH_OPTIONS = {
         show: false
       }
     },
-    yaxis: {
-      labels: {
-        offsetX: -10,
-        formatter: function (val) {
-            return `$${val.toFixed(2)}`;
-        }
-      },
-      tooltip: {
-        enabled: true,
-      }
-    },
+    yaxis: getYOptions(),
     grid: {
       padding: {
         left: -5,
@@ -114,4 +138,5 @@ const GRAPH_OPTIONS = {
       type: "solid",
       fillOpacity: 0.7
     }
-  };
+  }
+}

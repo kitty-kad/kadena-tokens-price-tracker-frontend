@@ -16,6 +16,7 @@ export const Prices = (_props) => {
   const [currTokenName, setCurrTokenName] = useState(null);
   const [fetchingPrice, setFetchingPrice] = useState(false);
   const [currTokenHistoricalData, setCurrTokenHistoricalData] = useState([]);
+  const [showInKda, setShowInKda] = useState(false);
 
   // Get the kadena price in USD once when first loading
   useEffect(() => {
@@ -55,7 +56,21 @@ export const Prices = (_props) => {
             <div style={tokenDataStyle}>
               <Price priceInKadena={currPrice} kdaToUsd={kdaToUsd} loading={fetchingPrice || fetchingKdaToUsd} currTokenName={currTokenName}/>
             </div>
-            <PriceGraph data={currTokenHistoricalData} currPrice={currPrice} kdaToUsd={kdaToUsd}/>
+            <PriceGraph data={currTokenHistoricalData} currPrice={currPrice} kdaToUsd={kdaToUsd} showInKda={showInKda}/>
+            <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly'}}>
+              <button style={buttonStyle}
+                  className={`btn btn-custom  ${showInKda === false? 'active': ''}`}
+                  onClick={()=>setShowInKda(false)}
+                >
+                  In USD
+              </button>
+              <button style={buttonStyle}
+                  className={`btn btn-custom ${showInKda === true? 'active': ''}`}
+                  onClick={()=>setShowInKda(true)}
+                  >
+                    In KDA
+              </button>
+            </div>
         </div>
       </div>
     </div>
@@ -146,3 +161,8 @@ const selectorAndGraphStyle = {
   paddingLeft: "20px",
   paddingRight: "20px",  
 }
+
+const buttonStyle = {
+  margin: '0 10', 
+  textTransform: 'none'
+};
