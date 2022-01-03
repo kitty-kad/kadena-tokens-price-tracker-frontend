@@ -21,7 +21,6 @@ export const PriceGraph = ({data, currPrice, kdaToUsd, showInKda}) => {
         }];
     }, [data, currPrice, kdaToUsd, showInKda]);
     const chartRef = useRef(null);
-    console.log(showInKda)
     let options = getGraphOptions();
     useMemo( () => {
       const chart = chartRef?.current?.chart;
@@ -32,9 +31,6 @@ export const PriceGraph = ({data, currPrice, kdaToUsd, showInKda}) => {
 
       chart.updateOptions({yaxis: getYOptions(showInKda)});
     }, [showInKda]);
-    console.log(chartRef);
-    console.log(CHART_WIDTH);
-    console.log(CHART_HEIGHT);
 
       return (
         <div>
