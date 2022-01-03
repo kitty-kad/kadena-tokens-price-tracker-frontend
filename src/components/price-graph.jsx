@@ -16,7 +16,7 @@ export const PriceGraph = ({data, currPrice, kdaToUsd, showInKda}) => {
           vals.push([Date.now(), currPrice * (showInKda ? 1 : kdaToUsd)]);
         }
         return [{
-            name: 'Price in USD',
+            name: `Price in ${showInKda? 'KDA' :'USD'}`,
             data: vals
         }];
     }, [data, currPrice, kdaToUsd, showInKda]);
