@@ -74,7 +74,7 @@ export const Prices = (_props) => {
       label: "30d",
     },
     {
-      value: { from: unixDaysAgo(30), to: now },
+      value: { from: unixDaysAgo(365), to: now },
       label: "365d",
     },
   ];
