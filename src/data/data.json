@@ -38,7 +38,8 @@
         {
             "icon": "fa fa-diamond",
             "title": "Kitty Kad NFTs",
-            "text": "Claim limited edition and unique randomly generated Kitty Kad NFTs by burning Kitty Kad tokens"
+            "text": "Claim limited edition and unique randomly generated Kitty Kad NFTs by burning Kitty Kad tokens",
+            "link": "https://kitties.kittykad.com"
         },
         {
             "icon": "fa fa-gamepad",
