@@ -33,16 +33,15 @@ const DEFAULT_DATE_OPTION = 2;
 const SAVE_KEYS = {
   SAVE_IN_KDA: "SAVE_IN_KDA",
   SAVE_SHOW_CANDLE: "SAVE_SHOW_CANDLE",
-  SAVE_FROM_TO: "SAVE_FROM_TO",
+  SAVE_DATE_OPTION: "SAVE_DATE_OPTION",
   SAVE_CURR_TOKEN_NAME: "SAVE_CURR_TOKEN_NAME",
   SAVE_CURR_TOKEN_ADDRESS: "SAVE_CURR_TOKEN_ADDRESS",
 };
 
 const savedShowInKda = tryLoadLocal(SAVE_KEYS.SAVE_IN_KDA) ?? false;
 const savedShowCandle = tryLoadLocal(SAVE_KEYS.SAVE_SHOW_CANDLE) ?? false;
-const savedFromTo =
-  tryLoadLocal(SAVE_KEYS.SAVE_FROM_TO) ??
-  dateOptions[DEFAULT_DATE_OPTION].value;
+const savedDateOption =
+  tryLoadLocal(SAVE_KEYS.SAVE_DATE_OPTION) ?? DEFAULT_DATE_OPTION;
 const savedCurrTokenName = tryLoadLocal(SAVE_KEYS.SAVE_CURR_TOKEN_NAME);
 const savedCurrTokenAddress = tryLoadLocal(SAVE_KEYS.SAVE_CURR_TOKEN_ADDRESS);
 
@@ -59,7 +58,7 @@ export const Prices = (_props) => {
   const [currTokenHistoricalData, setCurrTokenHistoricalData] = useState([]);
   const [currTokenCandleData, setCurrTokenCandleData] = useState([]);
   const [showInKda, setShowInKda] = useState(savedShowInKda);
-  const [fromTo, setFromTo] = useState(savedFromTo);
+  const [fromTo, setFromTo] = useState(dateOptions[savedDateOption].value);
   const [showCandle, setShowCandle] = useState(savedShowCandle);
 
   // Get the kadena price in USD once when first loading
@@ -111,7 +110,16 @@ export const Prices = (_props) => {
 
   const setUpdateFromTo = (val) => {
     setFromTo(val);
-    trySaveLocal(SAVE_KEYS.SAVE_FROM_TO);
+    let index;
+    for (let i = 0; i < dateOptions.length; i++) {
+      if (dateOptions[i].value.from === val.from) {
+        index = i;
+        break;
+      }
+    }
+    if (index != null) {
+      trySaveLocal(SAVE_KEYS.SAVE_DATE_OPTION, index);
+    }
   };
 
   const setUpdateShowCandle = (val) => {
@@ -128,6 +136,7 @@ export const Prices = (_props) => {
     setCurrTokenAddress(val);
     trySaveLocal(SAVE_KEYS.SAVE_CURR_TOKEN_ADDRESS, val);
   };
+
   return (
     <div
       id="prices"
@@ -162,7 +171,7 @@ export const Prices = (_props) => {
             </div>
             <div style={{ width: "100px" }}>
               <Select
-                defaultValue={dateOptions[DEFAULT_DATE_OPTION]}
+                defaultValue={dateOptions[savedDateOption]}
                 options={dateOptions}
                 styles={{ ...SELECTOR_STYLES, width: "10px" }}
                 onChange={(newValue) => {
