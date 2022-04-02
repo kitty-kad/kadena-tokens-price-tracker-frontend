@@ -4,21 +4,63 @@ import { useMemo, useState } from "react";
 import CoinGecko from "coingecko-api/lib/CoinGecko";
 import { PriceGraph } from "./price-graph";
 import { useEffect } from "react";
+import Toggle from "react-toggle";
 
 //2. Initiate the CoinGecko API Client
 const CoinGeckoClient = new CoinGecko();
+const NOW = unixDaysAgo(0);
+const dateOptions = [
+  {
+    value: { from: unixDaysAgo(2), to: NOW },
+    label: "1d",
+  },
+  {
+    value: { from: unixDaysAgo(7), to: NOW },
+    label: "7d",
+  },
+  {
+    value: { from: unixDaysAgo(30), to: NOW },
+    label: "30d",
+  },
+  {
+    value: { from: unixDaysAgo(365), to: NOW },
+    label: "365d",
+  },
+];
+
+const DEFAULT_DATE_OPTION = 2;
+
+const SAVE_KEYS = {
+  SAVE_IN_KDA: "SAVE_IN_KDA",
+  SAVE_SHOW_CANDLE: "SAVE_SHOW_CANDLE",
+  SAVE_FROM_TO: "SAVE_FROM_TO",
+  SAVE_CURR_TOKEN_NAME: "SAVE_CURR_TOKEN_NAME",
+  SAVE_CURR_TOKEN_ADDRESS: "SAVE_CURR_TOKEN_ADDRESS",
+};
+
+const savedShowInKda = tryLoadLocal(SAVE_KEYS.SAVE_IN_KDA) ?? false;
+const savedShowCandle = tryLoadLocal(SAVE_KEYS.SAVE_SHOW_CANDLE) ?? false;
+const savedFromTo =
+  tryLoadLocal(SAVE_KEYS.SAVE_FROM_TO) ??
+  dateOptions[DEFAULT_DATE_OPTION].value;
+const savedCurrTokenName = tryLoadLocal(SAVE_KEYS.SAVE_CURR_TOKEN_NAME);
+const savedCurrTokenAddress = tryLoadLocal(SAVE_KEYS.SAVE_CURR_TOKEN_ADDRESS);
 
 export const Prices = (_props) => {
   const [fetchingKdaToUsd, setFetchingKdaToUsd] = useState(false);
   const [tokensData, setTokensData] = useState(null);
   const [kdaToUsd, setKdaToUsd] = useState(null);
   const [currPrice, setCurrPrice] = useState(null);
-  const [currTokenName, setCurrTokenName] = useState(null);
-  const [currTokenAddress, setCurrTokenAddress] = useState(null);
+  const [currTokenName, setCurrTokenName] = useState(savedCurrTokenName);
+  const [currTokenAddress, setCurrTokenAddress] = useState(
+    savedCurrTokenAddress
+  );
   const [fetchingPrice, setFetchingPrice] = useState(false);
   const [currTokenHistoricalData, setCurrTokenHistoricalData] = useState([]);
-  const [showInKda, setShowInKda] = useState(false);
-  const [fromTo, setFromTo] = useState(null);
+  const [currTokenCandleData, setCurrTokenCandleData] = useState([]);
+  const [showInKda, setShowInKda] = useState(savedShowInKda);
+  const [fromTo, setFromTo] = useState(savedFromTo);
+  const [showCandle, setShowCandle] = useState(savedShowCandle);
 
   // Get the kadena price in USD once when first loading
   useEffect(() => {
@@ -46,6 +88,9 @@ export const Prices = (_props) => {
     getHistoricalPrices(currTokenAddress, fromTo, (data) =>
       setCurrTokenHistoricalData(data)
     );
+    getCandleHistoricalPrices(currTokenAddress, fromTo, (data) => {
+      setCurrTokenCandleData(data);
+    });
     getPriceInKadena(currTokenAddress).then((newPrice) => {
       setCurrPrice(newPrice);
       setFetchingPrice(false);
@@ -59,26 +104,30 @@ export const Prices = (_props) => {
     }));
   }, [tokensData]);
 
-  const now = unixDaysAgo(0);
-  const dateOptions = [
-    {
-      value: { from: unixDaysAgo(2), to: now },
-      label: "1d",
-    },
-    {
-      value: { from: unixDaysAgo(7), to: now },
-      label: "7d",
-    },
-    {
-      value: { from: unixDaysAgo(30), to: now },
-      label: "30d",
-    },
-    {
-      value: { from: unixDaysAgo(365), to: now },
-      label: "365d",
-    },
-  ];
+  const setUpdateShowInKda = (val) => {
+    setShowInKda(val);
+    trySaveLocal(SAVE_KEYS.SAVE_IN_KDA, val);
+  };
 
+  const setUpdateFromTo = (val) => {
+    setFromTo(val);
+    trySaveLocal(SAVE_KEYS.SAVE_FROM_TO);
+  };
+
+  const setUpdateShowCandle = (val) => {
+    setShowCandle(val);
+    trySaveLocal(SAVE_KEYS.SAVE_SHOW_CANDLE, val);
+  };
+
+  const setUpdateCurrTokenName = (val) => {
+    setCurrTokenName(val);
+    trySaveLocal(SAVE_KEYS.SAVE_CURR_TOKEN_NAME, val);
+  };
+
+  const setUpdateCurrTokenAddress = (val) => {
+    setCurrTokenAddress(val);
+    trySaveLocal(SAVE_KEYS.SAVE_CURR_TOKEN_ADDRESS, val);
+  };
   return (
     <div
       id="prices"
@@ -96,28 +145,45 @@ export const Prices = (_props) => {
               zIndex: 15,
               flexDirection: "row",
               justifyContent: "center",
+              alignItems: "center",
             }}
           >
             <div style={{ width: "200px", paddingRight: 20 }}>
               <Select
                 options={tokenOptions}
                 styles={SELECTOR_STYLES}
-                placeholder={"Select a token"}
+                placeholder={savedCurrTokenName ?? "Select a token"}
                 onChange={(newValue) => {
-                  setCurrTokenName(newValue.label);
-                  setCurrTokenAddress(newValue.value);
+                  setUpdateCurrTokenName(newValue.label);
+                  setUpdateCurrTokenAddress(newValue.value);
                   setFetchingPrice(true);
                 }}
               />
             </div>
             <div style={{ width: "100px" }}>
               <Select
-                defaultValue={dateOptions[2]}
+                defaultValue={dateOptions[DEFAULT_DATE_OPTION]}
                 options={dateOptions}
                 styles={{ ...SELECTOR_STYLES, width: "10px" }}
                 onChange={(newValue) => {
-                  setFromTo(newValue.value);
+                  setUpdateFromTo(newValue.value);
                 }}
+              />
+            </div>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                paddingLeft: 20,
+              }}
+            >
+              <div>Candle View (Beta)</div>
+              <Toggle
+                defaultChecked={savedShowCandle}
+                icons={false}
+                onChange={(e) => setUpdateShowCandle(e?.target?.checked)}
               />
             </div>
           </div>
@@ -135,6 +201,8 @@ export const Prices = (_props) => {
             currPrice={currPrice}
             kdaToUsd={kdaToUsd}
             showInKda={showInKda}
+            dataCandle={currTokenCandleData}
+            showCandle={showCandle}
           />
           <div
             style={{
@@ -148,14 +216,14 @@ export const Prices = (_props) => {
               className={`btn btn-custom  ${
                 showInKda === false ? "active" : ""
               }`}
-              onClick={() => setShowInKda(false)}
+              onClick={() => setUpdateShowInKda(false)}
             >
               In USD
             </button>
             <button
               style={buttonStyle}
               className={`btn btn-custom ${showInKda === true ? "active" : ""}`}
-              onClick={() => setShowInKda(true)}
+              onClick={() => setUpdateShowInKda(true)}
             >
               In KDA
             </button>
@@ -168,6 +236,17 @@ export const Prices = (_props) => {
 
 function getTokens(callback) {
   const url = `https://kadena-tokens-price-fetcher.herokuapp.com/getTokenMetadata`;
+  fetchJson(url, callback);
+}
+
+function getCandleHistoricalPrices(tokenAddress, fromTo, callback) {
+  const fromToParams =
+    fromTo?.from == null || fromTo?.to == null
+      ? ""
+      : `&fromTime=${fromTo.from}&toTime=${fromTo.to}`;
+  const url =
+    `https://kadena-tokens-price-fetcher.herokuapp.com/getCandlePrices?tokenAddress=${tokenAddress}` +
+    fromToParams;
   fetchJson(url, callback);
 }
 
@@ -245,6 +324,28 @@ function unixDaysAgo(days) {
   return Math.floor(
     new Date(new Date().setDate(today.getDate() - days)).getTime() / 1000
   );
+}
+
+function tryLoadLocal(key) {
+  let val = localStorage.getItem(key);
+  if (val == null) {
+    return null;
+  }
+  try {
+    return JSON.parse(val);
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
+}
+
+function trySaveLocal(key, val) {
+  try {
+    localStorage.setItem(key, JSON.stringify(val));
+  } catch (e) {
+    console.log(e);
+    return;
+  }
 }
 
 const KITTY_KAD_BLUE = "#58B2EE";
