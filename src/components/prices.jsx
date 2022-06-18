@@ -84,17 +84,25 @@ export const Prices = (_props) => {
   }, []);
 
   useEffect(() => {
+    if (currTokenAddress == null) {
+      return;
+    }
     getHistoricalPrices(currTokenAddress, fromTo, (data) =>
       setCurrTokenHistoricalData(data)
     );
     getCandleHistoricalPrices(currTokenAddress, fromTo, (data) => {
       setCurrTokenCandleData(data);
     });
-    getPriceInKadena(currTokenAddress).then((newPrice) => {
+    const metadata = tokensData?.find((a) => a.address === currTokenAddress);
+    getPriceInKadena(
+      currTokenAddress,
+      metadata?.exchange,
+      metadata?.chainId
+    ).then((newPrice) => {
       setCurrPrice(newPrice);
       setFetchingPrice(false);
     });
-  }, [currTokenAddress, fromTo]);
+  }, [currTokenAddress, fromTo, tokensData]);
 
   const tokenOptions = useMemo(() => {
     return tokensData?.map((data) => ({
