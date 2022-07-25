@@ -319,7 +319,9 @@ function Price({ priceInKadena, kdaToUsd, loading, currTokenName }) {
     text = "had trouble fetching price, please try again";
   } else {
     const priceInUSD = priceInKadena * kdaToUsd;
-    text = `USD: $${priceInUSD.toFixed(2)} KDA: ${priceInKadena.toFixed(4)}`;
+    text = `USD: $${priceInUSD.toPrecision(3)} KDA: ${priceInKadena.toPrecision(
+      3
+    )}`;
   }
   return <p>{text}</p>;
 }
