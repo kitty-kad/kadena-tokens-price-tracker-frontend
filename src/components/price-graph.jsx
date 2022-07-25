@@ -108,9 +108,7 @@ function getYOptions(showInKda) {
     labels: {
       offsetX: -10,
       formatter: function (val) {
-        return `${showInKda === true ? "" : "$"}${val.toFixed(
-          showInKda === true ? 3 : 2
-        )}`;
+        return val.toPrecision(3);
       },
     },
     tooltip: {
