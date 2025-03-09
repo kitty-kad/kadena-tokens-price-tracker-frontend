@@ -184,6 +184,9 @@ function getGraphOptions() {
       axisTicks: {
         show: false,
       },
+      labels: {
+        datetimeUTC: false
+      },
     },
     yaxis: getYOptions(),
     grid: {
